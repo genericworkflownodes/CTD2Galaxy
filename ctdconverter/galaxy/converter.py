@@ -1967,7 +1967,7 @@ def create_test_only(model, **kwargs):
             except KeyError:
                 param.default = _Null()
 
-        if is_selection_parameter(param) and type(param.default) is _Null:
+        if (is_selection_parameter(param) or param.is_list) and type(param.default) is _Null:
             value = None
         elif param.is_list and type(param.default) is not _Null:
             if param.type is _InFile:
@@ -2001,25 +2001,31 @@ def create_test_only(model, **kwargs):
             if param.is_list:
                 nd = add_child_node(test, "output_collection", OrderedDict([("name", name), ("count", value)]))
             else:
-                nd = add_child_node(test, "output", OrderedDict([("name", name), ("file", value)]))
-                for tc in test_condition:
-                    nd.attrib[tc[0]] = tc[1]
-                if ext:
-                    nd.attrib["ftype"] = ext
+                if value:
+                    # nd = add_child_node(test, "output", OrderedDict([("name", name), ("location", f"@TEST_DATA_LOCATION@{value}")]))
+                    nd = add_child_node(test, "output", OrderedDict([("name", name), ("value", value)]))
+                    for tc in test_condition:
+                        nd.attrib[tc[0]] = tc[1]
+                    if ext:
+                        nd.attrib["ftype"] = ext
         elif param.type is _OutPrefix:
             # #for outprefix elements / count need to be added manually
             name = get_galaxy_parameter_path(param, separator="_")
             nd = add_child_node(test, "output_collection", OrderedDict([("name", name), ("count", "")]))
         else:
             name = get_galaxy_parameter_name(param)
-            nd = add_child_node(parent, "param", OrderedDict([("name", name)]))
             if value is not None:
-                nd.attrib["value"] = value
+                nd = add_child_node(parent, "param", OrderedDict([("name", name), ("value", value)]))
+                # if param.type is _InFile:
+                #     nd.attrib["location"] = "@TEST_DATA_LOCATION@" + nd.attrib["value"]
+
         # add format attribute for unsniffable extensions
         if param.type is _InFile:
             ext = os.path.splitext(value)[1][1:]
             if ext in unsniffable and ext in o2g:
                 nd.attrib["ftype"] = o2g[ext]
+
+
 
     add_child_node(test, "param", OrderedDict([("name", "OPTIONAL_OUTPUTS"),
                                                ("value", ",".join(optout))]))
@@ -2032,6 +2038,11 @@ def create_test_only(model, **kwargs):
         nd = add_child_node(test, "output", OrderedDict([("name", "stdout"),
                                                          ("value", "stdout.txt"),
                                                          ("compare", "sim_size")]))
+    
+    # add a stdout assertion
+    stdout_assert = add_child_node(test, "assert_stdout")
+    stdout_has_text = add_child_node(stdout_assert, "has_text_matching", OrderedDict([("expression", "@EXECUTABLE@ took .* \(wall\), .* \(CPU\), .* \(system\), .* \(user\)(; Peak Memory Usage: 32 MB)?.")]))
+
     test.attrib["expect_num_outputs"] = str(outcnt)
 #     if all_optional_outputs(model, parameter_hardcoder):
     return test
