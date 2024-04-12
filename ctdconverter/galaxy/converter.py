@@ -655,12 +655,13 @@ python3 '$__tool_directory__/fill_ctd.py' '@EXECUTABLE@.ctd' '$args_json' '$hard
             # this leads to conflicts while linking... might also be better in general
             if param.type is _InFile:
                 param_cmd['preprocessing'].append("mkdir %s &&" % actual_parameter)
+                # TODO we copy input files to the JWD because of https://github.com/OpenMS/OpenMS/issues/7439
                 if param.is_list:
                     param_cmd['preprocessing'].append(f'#if ${_actual_parameter}_select == "no"')
                     param_cmd['preprocessing'].append(f"mkdir ${{' '.join([\"'{actual_parameter}/%s'\" % (i) for i, f in enumerate(${_actual_parameter}) if f])}} && ")
-                    param_cmd['preprocessing'].append(f"${{' '.join([\"ln -s '%s' '{actual_parameter}/%s/%s.%s' && \" % (f, i, re.sub('[^\\w\\-_]', '_', f.element_identifier), $gxy2omsext(f.ext)) for i, f in enumerate(${_actual_parameter}) if f])}}")
+                    param_cmd['preprocessing'].append(f"${{' '.join([\"cp '%s' '{actual_parameter}/%s/%s.%s' && \" % (f, i, re.sub('[^\\w\\-_]', '_', f.element_identifier), $gxy2omsext(f.ext)) for i, f in enumerate(${_actual_parameter}) if f])}}")
                     param_cmd['preprocessing'].append('#else')
-                    param_cmd['preprocessing'].append(f"ln -s '${_actual_parameter}' '{actual_parameter}/${{re.sub(\"[^\\w\\-_]\", \"_\", ${_actual_parameter}.element_identifier)}}.$gxy2omsext(${_actual_parameter}.ext)' &&")
+                    param_cmd['preprocessing'].append(f"cp '${_actual_parameter}' '{actual_parameter}/${{re.sub(\"[^\\w\\-_]\", \"_\", ${_actual_parameter}.element_identifier)}}.$gxy2omsext(${_actual_parameter}.ext)' &&")
                     param_cmd['preprocessing'].append('#end if')
                     param_cmd['command'].append(f'#if ${actual_parameter}_select == "no"')
                     param_cmd['command'].append(f"${{' '.join([\"'{actual_parameter}/%s/%s.%s'\"%(i, re.sub('[^\\w\\-_]', '_', f.element_identifier), $gxy2omsext(f.ext)) for i, f in enumerate(${_actual_parameter}) if f])}}")
@@ -668,7 +669,7 @@ python3 '$__tool_directory__/fill_ctd.py' '@EXECUTABLE@.ctd' '$args_json' '$hard
                     param_cmd['command'].append(f"'{actual_parameter}/${{re.sub(\"[^\\w\\-_]\", \"_\", ${_actual_parameter}.element_identifier)}}.$gxy2omsext(${_actual_parameter}.ext)'")
                     param_cmd['command'].append('#end if')
                 else:
-                    param_cmd['preprocessing'].append("ln -s '$" + _actual_parameter + "' '" + actual_parameter + "/${re.sub(\"[^\\w\\-_]\", \"_\", $" + _actual_parameter + ".element_identifier)}.$gxy2omsext($" + _actual_parameter + ".ext)' &&")
+                    param_cmd['preprocessing'].append("cp '$" + _actual_parameter + "' '" + actual_parameter + "/${re.sub(\"[^\\w\\-_]\", \"_\", $" + _actual_parameter + ".element_identifier)}.$gxy2omsext($" + _actual_parameter + ".ext)' &&")
                     param_cmd['command'].append("'" + actual_parameter + "/${re.sub(\"[^\\w\\-_]\", \"_\", $" + _actual_parameter + ".element_identifier)}.$gxy2omsext($" + _actual_parameter + ".ext)'")
 
             elif param.type is _OutPrefix:
