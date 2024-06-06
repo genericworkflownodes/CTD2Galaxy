@@ -881,7 +881,7 @@ def get_galaxy_parameter_path(param, separator=".", suffix=None, fix_underscore=
     path = utils.extract_param_path(param, fix_underscore)
     if len(path) > 1:
         path = path[:-1] + [p]
-    elif param.advanced and (param.type is not _OutFile or suffix):
+    elif param.advanced and (param.type is not _OutFile and param.type is not _OutPrefix or suffix):
         path = [ADVANCED_OPTIONS_NAME, p]
     else:
         path = [p]
