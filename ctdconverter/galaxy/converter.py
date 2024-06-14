@@ -1246,11 +1246,6 @@ def create_param_attribute_list(param, model, supported_file_formats, parameter_
     if is_selection_parameter(param):
         if param.is_list:
             param_node.attrib["multiple"] = "true"
-        if len(param.restrictions.choices) < 5:
-            if param.is_list and optional:
-                param_node.attrib["display"] = "checkboxes"
-            elif not param.is_list and not optional:
-                param_node.attrib["display"] = "radio"
 
     # check for parameters with restricted values (which will correspond to a "select" in galaxy)
     if param.restrictions is not None or param_type == "boolean":
@@ -1682,7 +1677,9 @@ def create_output_node(parent, param, model, supported_file_formats, parameter_h
             discover_node.attrib["pattern"] = "__name_and_ext__"
     elif corresponding_input is not None:
         logging.info(f"OUTPUT {param.name} input {corresponding_input.name}")
-        if param.is_list:
+        if param.is_list or param.type is _OutPrefix:
+            # TODO like for the else branch format_source would be better:
+            # with https://github.com/galaxyproject/galaxy/pull/9493
             discover_node.attrib["pattern"] = "__name_and_ext__"
 #             data_node.attrib["structured_like"] = get_galaxy_parameter_name(corresponding_input)
             # data_node.attrib["inherit_format"] = "true"
@@ -1796,7 +1793,7 @@ def create_tests(parent, inputs=None, outputs=None):
         elif node.attrib["type"] == "select":
             if node.getparent().tag == "conditional":  # set batch mode conditional select, this is done elsewhere
                 pass
-            elif node.attrib.get("display", None) == "radio" or node.attrib.get("multiple", "false") == "false":
+            elif node.attrib.get("multiple", "false") == "false":
                 node.attrib["value"] = node[0].attrib["value"]
             elif node.attrib.get("multiple", None) == "true":
                 node.attrib["value"] = ",".join([_.attrib["value"] for _ in node if "value" in _.attrib])
