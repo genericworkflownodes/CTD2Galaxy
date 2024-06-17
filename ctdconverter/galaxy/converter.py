@@ -1063,7 +1063,6 @@ def create_inputs(tool, model, **kwargs):
                 fmt_select_attrib = OrderedDict([
                     ("name", param.name + "_type"),
                     ("type", "select"),
-                    ("optional", "false"),
                     ("label", f"File type of output {param.name} ({param.description})")
                 ])
                 fmt_select = add_child_node(parent_node, "param", fmt_select_attrib)
@@ -1241,11 +1240,21 @@ def create_param_attribute_list(param, model, supported_file_formats, parameter_
         optional = False
     else:
         optional = not param.required
-    param_node.attrib["optional"] = str(optional).lower()
 
-    if is_selection_parameter(param):
-        if param.is_list:
-            param_node.attrib["multiple"] = "true"
+    # set multiple for select parameters if needed
+    # also set optional if it's not the default
+    # - for select with multiple=true optional defaults to true, i.e. we set it if the parameter is not optional
+    # - never set it for bool
+    # - otherwise the default is false, i.e. we set the attribute if the parameter is optional
+    if is_selection_parameter(param) and param.is_list:
+        param_node.attrib["multiple"] = "true"
+        if not optional:
+            param_node.attrib["optional"] = str(optional).lower()
+    if param_type == "boolean":
+        pass
+    else:
+        if optional:
+            param_node.attrib["optional"] = str(optional).lower()
 
     # check for parameters with restricted values (which will correspond to a "select" in galaxy)
     if param.restrictions is not None or param_type == "boolean":
@@ -1278,8 +1287,8 @@ def create_param_attribute_list(param, model, supported_file_formats, parameter_
                     if is_default(choice, param):
                         option_node.attrib["selected"] = "true"
 
-            # add validator to check that "nothing selected" is not seletcedto mandatory options w/o default
-            if param_node.attrib["optional"] == "False" and (param.default is None or type(param.default) is _Null):
+            # add validator to check that "nothing selected" is not seleted to mandatory options w/o default
+            if param_node.attrib.get("optional", "false") in ["false", "False"] and (param.default is None or type(param.default) is _Null):
                 validator_node = add_child_node(param_node, "validator", OrderedDict([("type", "expression"), ("message", "A value needs to be selected")]))
                 validator_node.text = 'value != "select a value"'
 
@@ -1412,7 +1421,7 @@ def create_param_attribute_list(param, model, supported_file_formats, parameter_
         when_no = add_child_node(conditional, "when", attributes={"value": "no"})
         when_no.append(copy.deepcopy(param_node))
         when_yes = add_child_node(conditional, "when", attributes={"value": "yes"})
-        param_node.attrib["multiple"] = "false"
+        del param_node.attrib["multiple"]
         when_yes.append(param_node)
         return conditional
 
