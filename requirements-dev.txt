@@ -1,0 +1,3 @@
+diff_cover
+planemo
+pydocstyle

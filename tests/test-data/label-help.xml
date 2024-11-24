@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!--This is a configuration file for the integration of a tools into Galaxy (https://galaxyproject.org/). This file was automatically generated using CTDConverter.-->
 <!--Proposed Tool Section: [Test]-->
-<tool id="label-help" name="label-help" version="@TOOL_VERSION@+galaxy@GALAXY_VERSION@">
+<tool id="label-help" name="label-help" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@">
   <description>Lebel Help parameter tests</description>
   <macros>
     <token name="@EXECUTABLE@">label-help</token>
@@ -32,28 +32,28 @@ python3 '$__tool_directory__/fill_ctd.py' '@EXECUTABLE@.ctd' '$args_json' '$hard
     <configfile name="hardcoded_json"><![CDATA[{}]]></configfile>
   </configfiles>
   <inputs>
-    <param name="do" argument="-do" type="text" optional="false" value="" label="label label label label label label label label" help="help">
+    <param argument="-do" type="text" optional="false" value="" label="label label label label label label label label" help="help">
       <expand macro="list_string_san" name="do"/>
     </param>
-    <param name="qm" argument="-qm" type="text" optional="false" value="" label="label label label label label label label label" help="help">
+    <param argument="-qm" type="text" optional="false" value="" label="label label label label label label label label" help="help">
       <expand macro="list_string_san" name="qm"/>
     </param>
-    <param name="ex" argument="-ex" type="text" optional="false" value="" label="label label label label label label label label" help="help">
+    <param argument="-ex" type="text" optional="false" value="" label="label label label label label label label label" help="help">
       <expand macro="list_string_san" name="ex"/>
     </param>
-    <param name="sc" argument="-sc" type="text" optional="false" value="" label="label label label label label label label label &amp; label" help="help">
+    <param argument="-sc" type="text" optional="false" value="" label="label label label label label label label label &amp; label" help="help">
       <expand macro="list_string_san" name="sc"/>
     </param>
-    <param name="coeg" argument="-coeg" type="text" optional="false" value="" label="label label label label label label label label" help="e.g. help">
+    <param argument="-coeg" type="text" optional="false" value="" label="label label label label label label label label" help="e.g. help">
       <expand macro="list_string_san" name="coeg"/>
     </param>
-    <param name="pteg" argument="-pteg" type="text" optional="false" value="" label="label label label label label label label label" help="(e.g. help)">
+    <param argument="-pteg" type="text" optional="false" value="" label="label label label label label label label label" help="(e.g. help)">
       <expand macro="list_string_san" name="pteg"/>
     </param>
-    <param name="coie" argument="-coie" type="text" optional="false" value="" label="label label label label label label label label" help="i.e. help">
+    <param argument="-coie" type="text" optional="false" value="" label="label label label label label label label label" help="i.e. help">
       <expand macro="list_string_san" name="coie"/>
     </param>
-    <param name="ptie" argument="-ptie" type="text" optional="false" value="" label="label label label label label label label label" help="(i.e. help)">
+    <param argument="-ptie" type="text" optional="false" value="" label="label label label label label label label label" help="(i.e. help)">
       <expand macro="list_string_san" name="ptie"/>
     </param>
     <expand macro="adv_opts_macro"/>
@@ -79,9 +79,8 @@ python3 '$__tool_directory__/fill_ctd.py' '@EXECUTABLE@.ctd' '$args_json' '$hard
       <param name="pteg" value="1 2"/>
       <param name="coie" value="1 2"/>
       <param name="ptie" value="1 2"/>
-      <conditional name="adv_opts_cond">
-        <param name="adv_opts_selector" value="advanced"/>
-      </conditional>
+      <section name="adv_opts">
+      </section>
     </test>
   </tests>
   <help><![CDATA[Label Help parameter tests.

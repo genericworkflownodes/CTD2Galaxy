@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!--This is a configuration file for the integration of a tools into Galaxy (https://galaxyproject.org/). This file was automatically generated using CTDConverter.-->
 <!--Proposed Tool Section: [Test]-->
-<tool id="ofile-mult" name="ofile-mult" version="@TOOL_VERSION@+galaxy@GALAXY_VERSION@">
+<tool id="ofile-mult" name="ofile-mult" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@">
   <description>multiple Output File parameter tests</description>
   <macros>
     <token name="@EXECUTABLE@">ofile-mult</token>
@@ -15,17 +15,25 @@
 
 ## Preprocessing
 mkdir mandatory_mandatoryinput &&
-mkdir ${' '.join(["'mandatory_mandatoryinput/%s'" % (i) for i, f in enumerate($inp_mandatory_mandatoryinput) if f])} && 
+mkdir ${' '.join(["'mandatory_mandatoryinput/%s'" % (i) for i, f in enumerate($inp_mandatory_mandatoryinput_cond.inp_mandatory_mandatoryinput) if f])} && 
 #if "optional_mandatoryinput_FLAG" in str($OPTIONAL_OUTPUTS).split(',')
   mkdir optional_mandatoryinput &&
-  mkdir ${' '.join(["'optional_mandatoryinput/%s'" % (i) for i, f in enumerate($inp_optional_mandatoryinput) if f])} && 
+  mkdir ${' '.join(["'optional_mandatoryinput/%s'" % (i) for i, f in enumerate($inp_optional_mandatoryinput_cond.inp_optional_mandatoryinput) if f])} && 
 #end if
-mkdir inp_mandatory_mandatoryinput &&
-mkdir ${' '.join(["'inp_mandatory_mandatoryinput/%s'" % (i) for i, f in enumerate($inp_mandatory_mandatoryinput) if f])} && 
-${' '.join(["ln -s '%s' 'inp_mandatory_mandatoryinput/%s/%s.%s' && " % (f, i, re.sub('[^\w\-_]', '_', f.element_identifier), $gxy2omsext(f.ext)) for i, f in enumerate($inp_mandatory_mandatoryinput) if f])}
-mkdir inp_optional_mandatoryinput &&
-mkdir ${' '.join(["'inp_optional_mandatoryinput/%s'" % (i) for i, f in enumerate($inp_optional_mandatoryinput) if f])} && 
-${' '.join(["ln -s '%s' 'inp_optional_mandatoryinput/%s/%s.%s' && " % (f, i, re.sub('[^\w\-_]', '_', f.element_identifier), $gxy2omsext(f.ext)) for i, f in enumerate($inp_optional_mandatoryinput) if f])}
+mkdir inp_mandatory_mandatoryinput_cond.inp_mandatory_mandatoryinput &&
+#if $inp_mandatory_mandatoryinput_cond.inp_mandatory_mandatoryinput_select == "no"
+mkdir ${' '.join(["'inp_mandatory_mandatoryinput_cond.inp_mandatory_mandatoryinput/%s'" % (i) for i, f in enumerate($inp_mandatory_mandatoryinput_cond.inp_mandatory_mandatoryinput) if f])} && 
+${' '.join(["ln -s '%s' 'inp_mandatory_mandatoryinput_cond.inp_mandatory_mandatoryinput/%s/%s.%s' && " % (f, i, re.sub('[^\w\-_]', '_', f.element_identifier), $gxy2omsext(f.ext)) for i, f in enumerate($inp_mandatory_mandatoryinput_cond.inp_mandatory_mandatoryinput) if f])}
+#else
+ln -s '$inp_mandatory_mandatoryinput_cond.inp_mandatory_mandatoryinput' 'inp_mandatory_mandatoryinput_cond.inp_mandatory_mandatoryinput/${re.sub("[^\w\-_]", "_", $inp_mandatory_mandatoryinput_cond.inp_mandatory_mandatoryinput.element_identifier)}.$gxy2omsext($inp_mandatory_mandatoryinput_cond.inp_mandatory_mandatoryinput.ext)' &&
+#end if
+mkdir inp_optional_mandatoryinput_cond.inp_optional_mandatoryinput &&
+#if $inp_optional_mandatoryinput_cond.inp_optional_mandatoryinput_select == "no"
+mkdir ${' '.join(["'inp_optional_mandatoryinput_cond.inp_optional_mandatoryinput/%s'" % (i) for i, f in enumerate($inp_optional_mandatoryinput_cond.inp_optional_mandatoryinput) if f])} && 
+${' '.join(["ln -s '%s' 'inp_optional_mandatoryinput_cond.inp_optional_mandatoryinput/%s/%s.%s' && " % (f, i, re.sub('[^\w\-_]', '_', f.element_identifier), $gxy2omsext(f.ext)) for i, f in enumerate($inp_optional_mandatoryinput_cond.inp_optional_mandatoryinput) if f])}
+#else
+ln -s '$inp_optional_mandatoryinput_cond.inp_optional_mandatoryinput' 'inp_optional_mandatoryinput_cond.inp_optional_mandatoryinput/${re.sub("[^\w\-_]", "_", $inp_optional_mandatoryinput_cond.inp_optional_mandatoryinput.element_identifier)}.$gxy2omsext($inp_optional_mandatoryinput_cond.inp_optional_mandatoryinput.ext)' &&
+#end if
 
 ## Main program call
 
@@ -34,23 +42,31 @@ set -o pipefail &&
 python3 '$__tool_directory__/fill_ctd.py' '@EXECUTABLE@.ctd' '$args_json' '$hardcoded_json' &&
 @EXECUTABLE@ -ini @EXECUTABLE@.ctd
 -mandatory_mandatoryinput
-${' '.join(["'mandatory_mandatoryinput/%s/%s.%s'"%(i, re.sub('[^\w\-_]', '_', f.element_identifier), $gxy2omsext("tsv")) for i, f in enumerate($inp_mandatory_mandatoryinput) if f])}
+${' '.join(["'mandatory_mandatoryinput/%s/%s.%s'"%(i, re.sub('[^\w\-_]', '_', f.element_identifier), $gxy2omsext("tsv")) for i, f in enumerate($inp_mandatory_mandatoryinput_cond.inp_mandatory_mandatoryinput) if f])}
 #if "optional_mandatoryinput_FLAG" in str($OPTIONAL_OUTPUTS).split(',')
   -optional_mandatoryinput
-  ${' '.join(["'optional_mandatoryinput/%s/%s.%s'"%(i, re.sub('[^\w\-_]', '_', f.element_identifier), $gxy2omsext("tsv")) for i, f in enumerate($inp_optional_mandatoryinput) if f])}
+  ${' '.join(["'optional_mandatoryinput/%s/%s.%s'"%(i, re.sub('[^\w\-_]', '_', f.element_identifier), $gxy2omsext("tsv")) for i, f in enumerate($inp_optional_mandatoryinput_cond.inp_optional_mandatoryinput) if f])}
 #end if
 -inp_mandatory_mandatoryinput
-${' '.join(["'inp_mandatory_mandatoryinput/%s/%s.%s'"%(i, re.sub('[^\w\-_]', '_', f.element_identifier), $gxy2omsext(f.ext)) for i, f in enumerate($inp_mandatory_mandatoryinput) if f])}
+#if $inp_mandatory_mandatoryinput_cond.inp_mandatory_mandatoryinput_select == "no"
+${' '.join(["'inp_mandatory_mandatoryinput_cond.inp_mandatory_mandatoryinput/%s/%s.%s'"%(i, re.sub('[^\w\-_]', '_', f.element_identifier), $gxy2omsext(f.ext)) for i, f in enumerate($inp_mandatory_mandatoryinput_cond.inp_mandatory_mandatoryinput) if f])}
+#else
+'inp_mandatory_mandatoryinput_cond.inp_mandatory_mandatoryinput/${re.sub("[^\w\-_]", "_", $inp_mandatory_mandatoryinput_cond.inp_mandatory_mandatoryinput.element_identifier)}.$gxy2omsext($inp_mandatory_mandatoryinput_cond.inp_mandatory_mandatoryinput.ext)'
+#end if
 -inp_optional_mandatoryinput
-${' '.join(["'inp_optional_mandatoryinput/%s/%s.%s'"%(i, re.sub('[^\w\-_]', '_', f.element_identifier), $gxy2omsext(f.ext)) for i, f in enumerate($inp_optional_mandatoryinput) if f])}
+#if $inp_optional_mandatoryinput_cond.inp_optional_mandatoryinput_select == "no"
+${' '.join(["'inp_optional_mandatoryinput_cond.inp_optional_mandatoryinput/%s/%s.%s'"%(i, re.sub('[^\w\-_]', '_', f.element_identifier), $gxy2omsext(f.ext)) for i, f in enumerate($inp_optional_mandatoryinput_cond.inp_optional_mandatoryinput) if f])}
+#else
+'inp_optional_mandatoryinput_cond.inp_optional_mandatoryinput/${re.sub("[^\w\-_]", "_", $inp_optional_mandatoryinput_cond.inp_optional_mandatoryinput.element_identifier)}.$gxy2omsext($inp_optional_mandatoryinput_cond.inp_optional_mandatoryinput.ext)'
+#end if
 #if len(str($OPTIONAL_OUTPUTS).split(',')) == 0
   | tee '$stdout'
 #end if
 
 ## Postprocessing
-${' '.join(["&& mv -n 'mandatory_mandatoryinput/%(bn)s/%(id)s.%(gext)s' 'mandatory_mandatoryinput/%(bn)s/%(id)s'"%{"bn": i, "id": re.sub('[^\w\-_]', '_', f.element_identifier), "gext": $gxy2omsext("tsv")} for i, f in enumerate($inp_mandatory_mandatoryinput) if f])}
+${' '.join(["&& mv -n 'mandatory_mandatoryinput/%(bn)s/%(id)s.%(gext)s' 'mandatory_mandatoryinput/%(bn)s/%(id)s'"%{"bn": i, "id": re.sub('[^\w\-_]', '_', f.element_identifier), "gext": $gxy2omsext("tsv")} for i, f in enumerate($inp_mandatory_mandatoryinput_cond.inp_mandatory_mandatoryinput) if f])}
 #if "optional_mandatoryinput_FLAG" in str($OPTIONAL_OUTPUTS).split(',')
-  ${' '.join(["&& mv -n 'optional_mandatoryinput/%(bn)s/%(id)s.%(gext)s' 'optional_mandatoryinput/%(bn)s/%(id)s'"%{"bn": i, "id": re.sub('[^\w\-_]', '_', f.element_identifier), "gext": $gxy2omsext("tsv")} for i, f in enumerate($inp_optional_mandatoryinput) if f])}
+  ${' '.join(["&& mv -n 'optional_mandatoryinput/%(bn)s/%(id)s.%(gext)s' 'optional_mandatoryinput/%(bn)s/%(id)s'"%{"bn": i, "id": re.sub('[^\w\-_]', '_', f.element_identifier), "gext": $gxy2omsext("tsv")} for i, f in enumerate($inp_optional_mandatoryinput_cond.inp_optional_mandatoryinput) if f])}
 #end if
 #if "ctd_out_FLAG" in $OPTIONAL_OUTPUTS
   && mv '@EXECUTABLE@.ctd' '$ctd_out'
@@ -60,8 +76,30 @@ ${' '.join(["&& mv -n 'mandatory_mandatoryinput/%(bn)s/%(id)s.%(gext)s' 'mandato
     <configfile name="hardcoded_json"><![CDATA[{}]]></configfile>
   </configfiles>
   <inputs>
-    <param name="inp_mandatory_mandatoryinput" argument="-inp_mandatory_mandatoryinput" type="data" format="tsv" multiple="true" optional="false" label="input file" help=" select tsv data sets(s)"/>
-    <param name="inp_optional_mandatoryinput" argument="-inp_optional_mandatoryinput" type="data" format="tsv" multiple="true" optional="false" label="input file" help=" select tsv data sets(s)"/>
+    <conditional name="inp_mandatory_mandatoryinput_cond">
+      <param name="inp_mandatory_mandatoryinput_select" type="select" label="Run tool in batch mode for -inp_mandatory_mandatoryinput">
+        <option value="no">No: process all datasets jointly</option>
+        <option value="yes">Yes: process each dataset in an independent job</option>
+      </param>
+      <when value="no">
+        <param argument="-inp_mandatory_mandatoryinput" type="data" format="tsv" multiple="true" optional="false" label="input file" help=" select tsv data sets(s)"/>
+      </when>
+      <when value="yes">
+        <param argument="-inp_mandatory_mandatoryinput" type="data" format="tsv" multiple="false" optional="false" label="input file" help=" select tsv data sets(s)"/>
+      </when>
+    </conditional>
+    <conditional name="inp_optional_mandatoryinput_cond">
+      <param name="inp_optional_mandatoryinput_select" type="select" label="Run tool in batch mode for -inp_optional_mandatoryinput">
+        <option value="no">No: process all datasets jointly</option>
+        <option value="yes">Yes: process each dataset in an independent job</option>
+      </param>
+      <when value="no">
+        <param argument="-inp_optional_mandatoryinput" type="data" format="tsv" multiple="true" optional="false" label="input file" help=" select tsv data sets(s)"/>
+      </when>
+      <when value="yes">
+        <param argument="-inp_optional_mandatoryinput" type="data" format="tsv" multiple="false" optional="false" label="input file" help=" select tsv data sets(s)"/>
+      </when>
+    </conditional>
     <expand macro="adv_opts_macro"/>
     <param name="OPTIONAL_OUTPUTS" type="select" optional="true" multiple="true" label="Optional outputs">
       <option value="optional_mandatoryinput_FLAG">optional_mandatoryinput (output file)</option>
@@ -82,12 +120,16 @@ ${' '.join(["&& mv -n 'mandatory_mandatoryinput/%(bn)s/%(id)s.%(gext)s' 'mandato
   </outputs>
   <tests>
     <test expect_num_outputs="1">
-      <param name="inp_mandatory_mandatoryinput" ftype="tsv" value="0test.ext,0test2.ext"/>
-      <param name="inp_optional_mandatoryinput" ftype="tsv" value="1test.ext,1test2.ext"/>
-      <conditional name="adv_opts_cond">
-        <param name="adv_opts_selector" value="advanced"/>
+      <conditional name="inp_mandatory_mandatoryinput_cond">
+        <param name="inp_mandatory_mandatoryinput_select" value="no"/>
+        <param name="inp_mandatory_mandatoryinput" ftype="tsv" value="1test.ext,1test2.ext"/>
       </conditional>
-      <output_collection name="mandatory_mandatoryinput"/>
+      <conditional name="inp_optional_mandatoryinput_cond">
+        <param name="inp_optional_mandatoryinput_select" value="no"/>
+        <param name="inp_optional_mandatoryinput" ftype="tsv" value="3test.ext,3test2.ext"/>
+      </conditional>
+      <section name="adv_opts"/>
+      <output_collection name="mandatory_mandatoryinput" count="0"/>
     </test>
   </tests>
   <help><![CDATA[Multiple Output File parameter tests.

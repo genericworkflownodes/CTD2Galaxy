@@ -1,1 +1,115 @@
-../../ctdconverter/galaxy/macros.xml
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- CTD2Galaxy depends on this file and on the stdio, advanced_options macros!
+     You can edit this file to add your own macros, if you so desire, or you can
+     add additional macro files using the m/macros parameter -->
+<macros>
+  <token name="@TOOL_VERSION@">3.8</token>
+  <token name="@VERSION_SUFFIX@">0</token>
+  <xml name="requirements">
+    <requirements>
+      <requirement type="package" version="@TOOL_VERSION@">python</requirement>
+	    <requirement type="package" version="1.4">ctdopts</requirement>
+      <yield/>
+    </requirements>
+  </xml>
+  <xml name="stdio">
+    <stdio>
+      <regex match="Could not allocate metaspace" level="fatal_oom" description="Java memory Exception"/>
+      <regex match="Cannot create VM thread" level="fatal_oom" description="Java memory Exception"/>
+      <regex match="qUncompress: could not allocate enough memory to uncompress data" level="fatal_oom" description="Java memory Exception"/>
+    </stdio>
+  </xml>
+  <xml name="references">
+    <citations>
+      <citation type="doi">doi:10.1186/1471-2105-9-163</citation>
+    </citations>
+  </xml>
+  <xml name="adv_opts_macro">
+    <section name="adv_opts" title="Advanced Options" expanded="false">
+        <yield/>
+    </section>
+  </xml>
+
+  <!-- sanitizers and validators -->
+  <xml name="list_string_val">
+    <validator type="regex" message="parameter must not start with $">^[^$]</validator>
+    
+    <validator type="regex" message="a space separated list of string is needed (strings that contain spaces can be quoted with &quot;)">^ *((?:\"[^\"]*\" +)|(?:[^ \"]+ +))*((?:\"[^\"]*\")|(?:[^ \"]+)) *$</validator>
+  </xml>
+  <xml name="list_string_san">
+    <sanitizer>
+      <valid initial="string.printable">
+<!--        <remove value="'"/>-->
+<!--        <remove value="\"/>--><!-- otherwise the user could quote the final quote -->
+<!--        <remove value="`"/>-->
+<!--        <remove value="$"/>-->
+<!--        <remove value="&lt;"/>-->
+	<!--<remove value="&amp;"/> removed for MascotAdapterOnline -Mascot_server:export_params which is a URL POST string which can contain & .. could be mapped to &amp; but there is still a & -->
+        <!--<remove value=";"/>-->
+<!--        <remove value="#"/>-->
+      </valid>
+    </sanitizer>
+  </xml>
+  <xml name="list_float_valsan">
+    <validator type="regex" message="a space separated list of float values is required">^ *[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?( *[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)* *$</validator>
+    <yield/>
+    <sanitizer>
+      <valid initial="string.digits">
+        <add value=" "/>
+        <add value="."/>
+        <add value="E"/>
+        <add value="e"/>
+        <add value="+"/>
+        <add value="-"/>
+      </valid>
+    </sanitizer>
+  </xml>
+  <xml name="list_integer_valsan">
+    <validator type="regex" message="a space separated list of integer values is required">^ *[+-]?[0-9]+( *[+-]?[0-9]+)* *$</validator>
+    <yield/>
+    <sanitizer>
+      <valid initial="string.digits">
+        <add value=" "/>
+        <add value="+"/>
+        <add value="-"/>
+      </valid>
+    </sanitizer>
+  </xml>
+
+  <!-- helper function to quote space separated strings -->
+  <token name="@QUOTE_FOO@">
+#def quote(s):
+    #set $s = [ _ for _ in $s.split(" ") if _ != "" ]
+    #set $q = False
+    #for $i, $p in enumerate($s):
+        #if $p == "":
+            #continue
+        #end if
+        #if $p.startswith('"'):
+            #set $q = True
+        #end if
+##        #if p.startswith('-'):
+##            #set p = "\\" + p
+##        #elif p.startswith('"-'):
+##            #set p = "\\" + p[1:]
+##        #end if
+        #if not $q:
+            #set $s[i] = '"%s"' % p
+        #end if
+        #if $p.endswith('"'):
+            #set $q = False
+        #end if
+    #end for
+    #return " ".join($s)
+#end def
+  </token>
+
+  <token name="@EXT_FOO@"><![CDATA[#def oms2gxyext(o)
+    #set m={'eut': 'txt', 'evt': 'csv', 'ewt': 'tsv', 'ext': 'tsv', 'eyt': 'tabular', 'ezt': 'tabular'}
+    #return m[o]
+#end def
+#def gxy2omsext(g)
+    #set m={'txt': 'eut', 'csv': 'evt', 'tsv': 'ewt', 'tabular': 'eyt'}
+    #return m[g]
+#end def
+]]></token></macros>

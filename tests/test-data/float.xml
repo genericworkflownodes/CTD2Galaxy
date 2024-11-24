@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!--This is a configuration file for the integration of a tools into Galaxy (https://galaxyproject.org/). This file was automatically generated using CTDConverter.-->
 <!--Proposed Tool Section: [Test]-->
-<tool id="float" name="float" version="@TOOL_VERSION@+galaxy@GALAXY_VERSION@">
+<tool id="float" name="float" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@">
   <description>Float parameter tests</description>
   <macros>
     <token name="@EXECUTABLE@">float</token>
@@ -32,14 +32,14 @@ python3 '$__tool_directory__/fill_ctd.py' '@EXECUTABLE@.ctd' '$args_json' '$hard
     <configfile name="hardcoded_json"><![CDATA[{}]]></configfile>
   </configfiles>
   <inputs>
-    <param name="default_mandatory_unrestricted" argument="-default_mandatory_unrestricted" type="float" optional="false" value="0.0" label="float" help=""/>
-    <param name="default_optional_unrestricted" argument="-default_optional_unrestricted" type="float" optional="false" value="0.0" label="float" help=""/>
-    <param name="default_mandatory_unrestricted_min" argument="-default_mandatory_unrestricted_min" type="float" optional="false" min="0.0" value="0.0" label="float" help=""/>
-    <param name="default_optional_unrestricted_min" argument="-default_optional_unrestricted_min" type="float" optional="false" min="0.0" value="0.0" label="float" help=""/>
-    <param name="default_mandatory_unrestricted_max" argument="-default_mandatory_unrestricted_max" type="float" optional="false" max="100.0" value="0.0" label="float" help=""/>
-    <param name="default_optional_unrestricted_max" argument="-default_optional_unrestricted_max" type="float" optional="false" max="100.0" value="0.0" label="float" help=""/>
-    <param name="default_mandatory_unrestricted_minmax" argument="-default_mandatory_unrestricted_minmax" type="float" optional="false" min="0.0" max="100.0" value="0.0" label="float" help=""/>
-    <param name="default_optional_unrestricted_minmax" argument="-default_optional_unrestricted_minmax" type="float" optional="false" min="0.0" max="100.0" value="0.0" label="float" help=""/>
+    <param argument="-default_mandatory_unrestricted" type="float" optional="false" value="0.0" label="float" help=""/>
+    <param argument="-default_optional_unrestricted" type="float" optional="false" value="0.0" label="float" help=""/>
+    <param argument="-default_mandatory_unrestricted_min" type="float" optional="false" min="0.0" value="0.0" label="float" help=""/>
+    <param argument="-default_optional_unrestricted_min" type="float" optional="false" min="0.0" value="0.0" label="float" help=""/>
+    <param argument="-default_mandatory_unrestricted_max" type="float" optional="false" max="100.0" value="0.0" label="float" help=""/>
+    <param argument="-default_optional_unrestricted_max" type="float" optional="false" max="100.0" value="0.0" label="float" help=""/>
+    <param argument="-default_mandatory_unrestricted_minmax" type="float" optional="false" min="0.0" max="100.0" value="0.0" label="float" help=""/>
+    <param argument="-default_optional_unrestricted_minmax" type="float" optional="false" min="0.0" max="100.0" value="0.0" label="float" help=""/>
     <section name="test_section" title="Test Section" help="" expanded="false">
       <param name="sect_default_mandatory_unrestricted" argument="-test_section:sect_default_mandatory_unrestricted" type="float" optional="false" value="0.0" label="float" help=""/>
       <param name="sect_default_optional_unrestricted" argument="-test_section:sect_default_optional_unrestricted" type="float" optional="false" value="0.0" label="float" help=""/>
@@ -59,14 +59,14 @@ python3 '$__tool_directory__/fill_ctd.py' '@EXECUTABLE@.ctd' '$args_json' '$hard
       <param name="sect_default_optional_unrestricted_adv_minmax" argument="-test_section:sect_default_optional_unrestricted_adv_minmax" type="float" optional="false" min="0.0" max="100.0" value="0.0" label="float" help=""/>
     </section>
     <expand macro="adv_opts_macro">
-      <param name="default_mandatory_unrestricted_adv" argument="-default_mandatory_unrestricted_adv" type="float" optional="false" value="0.0" label="float" help=""/>
-      <param name="default_optional_unrestricted_adv" argument="-default_optional_unrestricted_adv" type="float" optional="false" value="0.0" label="float" help=""/>
-      <param name="default_mandatory_unrestricted_adv_min" argument="-default_mandatory_unrestricted_adv_min" type="float" optional="false" min="0.0" value="0.0" label="float" help=""/>
-      <param name="default_optional_unrestricted_adv_min" argument="-default_optional_unrestricted_adv_min" type="float" optional="false" min="0.0" value="0.0" label="float" help=""/>
-      <param name="default_mandatory_unrestricted_adv_max" argument="-default_mandatory_unrestricted_adv_max" type="float" optional="false" max="100.0" value="0.0" label="float" help=""/>
-      <param name="default_optional_unrestricted_adv_max" argument="-default_optional_unrestricted_adv_max" type="float" optional="false" max="100.0" value="0.0" label="float" help=""/>
-      <param name="default_mandatory_unrestricted_adv_minmax" argument="-default_mandatory_unrestricted_adv_minmax" type="float" optional="false" min="0.0" max="100.0" value="0.0" label="float" help=""/>
-      <param name="default_optional_unrestricted_adv_minmax" argument="-default_optional_unrestricted_adv_minmax" type="float" optional="false" min="0.0" max="100.0" value="0.0" label="float" help=""/>
+      <param argument="-default_mandatory_unrestricted_adv" type="float" optional="false" value="0.0" label="float" help=""/>
+      <param argument="-default_optional_unrestricted_adv" type="float" optional="false" value="0.0" label="float" help=""/>
+      <param argument="-default_mandatory_unrestricted_adv_min" type="float" optional="false" min="0.0" value="0.0" label="float" help=""/>
+      <param argument="-default_optional_unrestricted_adv_min" type="float" optional="false" min="0.0" value="0.0" label="float" help=""/>
+      <param argument="-default_mandatory_unrestricted_adv_max" type="float" optional="false" max="100.0" value="0.0" label="float" help=""/>
+      <param argument="-default_optional_unrestricted_adv_max" type="float" optional="false" max="100.0" value="0.0" label="float" help=""/>
+      <param argument="-default_mandatory_unrestricted_adv_minmax" type="float" optional="false" min="0.0" max="100.0" value="0.0" label="float" help=""/>
+      <param argument="-default_optional_unrestricted_adv_minmax" type="float" optional="false" min="0.0" max="100.0" value="0.0" label="float" help=""/>
     </expand>
     <param name="OPTIONAL_OUTPUTS" type="select" optional="true" multiple="true" label="Optional outputs">
       <option value="ctd_out_FLAG">Output used ctd (ini) configuration file</option>
@@ -108,7 +108,7 @@ python3 '$__tool_directory__/fill_ctd.py' '@EXECUTABLE@.ctd' '$args_json' '$hard
         <param name="sect_default_mandatory_unrestricted_adv_minmax" value="0.0"/>
         <param name="sect_default_optional_unrestricted_adv_minmax" value="0.0"/>
       </section>
-      <conditional name="adv_opts_cond">
+      <section name="adv_opts">
         <param name="default_mandatory_unrestricted_adv" value="0.0"/>
         <param name="default_optional_unrestricted_adv" value="0.0"/>
         <param name="default_mandatory_unrestricted_adv_min" value="0.0"/>
@@ -117,8 +117,7 @@ python3 '$__tool_directory__/fill_ctd.py' '@EXECUTABLE@.ctd' '$args_json' '$hard
         <param name="default_optional_unrestricted_adv_max" value="0.0"/>
         <param name="default_mandatory_unrestricted_adv_minmax" value="0.0"/>
         <param name="default_optional_unrestricted_adv_minmax" value="0.0"/>
-        <param name="adv_opts_selector" value="advanced"/>
-      </conditional>
+      </section>
     </test>
   </tests>
   <help><![CDATA[Float parameter tests.

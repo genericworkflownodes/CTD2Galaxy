@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tool ctdVersion="1.7" version="2.3.0" name="bool" docurl="http://www.openms.de/unavailable.html" category="Test" >
-<description><![CDATA[Bool parameter tests]]></description>
+<description><![CDATA[Bool parameter tests
+
+Some additional text that must not appear in the Galaxy tool description.
+]]></description>
 <manual><![CDATA[Bool parameter tests.]]></manual>
 <PARAMETERS version="1.6.2" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/OpenMS/OpenMS/develop/share/OpenMS/SCHEMAS/Param_1_6_2.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <NODE name="BoolTest" description="Bool test.">

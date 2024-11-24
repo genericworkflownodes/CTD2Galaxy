@@ -1,3 +1,4 @@
+import logging
 import os
 import sys
 import traceback
@@ -75,7 +76,7 @@ def main(argv=None):
     # at this point we cannot parse the arguments, because each converter takes different arguments, meaning each
     # converter will register its own parameters after we've registered the basic ones... we have to do it old school
     if len(argv) < 2:
-        utils.logger.error("Not enough arguments provided")
+        logging.error("Not enough arguments provided")
         print("\nUsage: $ CTDConverter [TARGET] [ARGUMENTS]\n\n"
               "Where:\n"
               "  target: one of 'cwl' or 'galaxy'\n\n"
@@ -94,10 +95,10 @@ def main(argv=None):
 #         print(program_license)
 #         return 0
     else:
-        utils.logger.error("Unrecognized target engine. Supported targets are 'cwl' and 'galaxy'.")
+        logging.error("Unrecognized target engine. Supported targets are 'cwl' and 'galaxy'.")
         return 1
 
-    utils.logger.info("Using %s converter" % target)
+    logging.info("Using %s converter" % target)
 
     try:
         # Setup argument parser
@@ -126,20 +127,20 @@ def main(argv=None):
 
     except ApplicationException as e:
         traceback.print_exc()
-        utils.logger.error("CTDConverter could not complete the requested operation.", 0)
-        utils.logger.error("Reason: " + e.msg, 0)
+        logging.error("CTDConverter could not complete the requested operation.")
+        logging.error("Reason: " + e.msg)
         return 1
 
     except ModelError as e:
         traceback.print_exc()
-        utils.logger.error("There seems to be a problem with one of your input CTDs.", 0)
-        utils.logger.error("Reason: " + e.msg, 0)
+        logging.error("There seems to be a problem with one of your input CTDs.")
+        logging.error("Reason: " + e.msg)
         return 1
 
     except Exception as e:
         traceback.print_exc()
-        utils.logger.error("CTDConverter could not complete the requested operation.", 0)
-        utils.logger.error("Reason: " + e.msg, 0)
+        logging.error("CTDConverter could not complete the requested operation.")
+        logging.error("Reason: " + e.msg)
         return 2
 
 

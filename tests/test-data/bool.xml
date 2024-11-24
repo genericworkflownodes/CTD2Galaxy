@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!--This is a configuration file for the integration of a tools into Galaxy (https://galaxyproject.org/). This file was automatically generated using CTDConverter.-->
 <!--Proposed Tool Section: [Test]-->
-<tool id="bool" name="bool" version="@TOOL_VERSION@+galaxy@GALAXY_VERSION@">
+<tool id="bool" name="bool" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@">
   <description>Bool parameter tests</description>
   <macros>
     <token name="@EXECUTABLE@">bool</token>
@@ -32,12 +32,12 @@ python3 '$__tool_directory__/fill_ctd.py' '@EXECUTABLE@.ctd' '$args_json' '$hard
     <configfile name="hardcoded_json"><![CDATA[{}]]></configfile>
   </configfiles>
   <inputs>
-    <param name="flag" argument="-flag" type="boolean" truevalue="true" falsevalue="false" checked="false" label="flag" help=""/>
-    <param name="flag_adv" argument="-flag_adv" type="boolean" truevalue="true" falsevalue="false" checked="false" label="flag" help=""/>
-    <param name="true" argument="-true" type="boolean" truevalue="true" falsevalue="false" checked="true" label="bool" help=""/>
-    <param name="false" argument="-false" type="boolean" truevalue="true" falsevalue="false" checked="false" label="bool" help=""/>
-    <param name="flag_true" argument="-flag_true" type="boolean" truevalue="true" falsevalue="false" checked="true" label="bool" help=""/>
-    <param name="flag_false" argument="-flag_false" type="boolean" truevalue="true" falsevalue="false" checked="false" label="bool" help=""/>
+    <param argument="-flag" type="boolean" truevalue="true" falsevalue="false" checked="false" label="flag" help=""/>
+    <param argument="-flag_adv" type="boolean" truevalue="true" falsevalue="false" checked="false" label="flag" help=""/>
+    <param argument="-true" type="boolean" truevalue="true" falsevalue="false" checked="true" label="bool" help=""/>
+    <param argument="-false" type="boolean" truevalue="true" falsevalue="false" checked="false" label="bool" help=""/>
+    <param argument="-flag_true" type="boolean" truevalue="true" falsevalue="false" checked="true" label="bool" help=""/>
+    <param argument="-flag_false" type="boolean" truevalue="true" falsevalue="false" checked="false" label="bool" help=""/>
     <section name="test_section" title="Test Section" help="" expanded="false">
       <param name="sect_true" argument="-test_section:sect_true" type="boolean" truevalue="true" falsevalue="false" checked="true" label="bool" help=""/>
       <param name="sect_false" argument="-test_section:sect_false" type="boolean" truevalue="true" falsevalue="false" checked="false" label="bool" help=""/>
@@ -49,10 +49,10 @@ python3 '$__tool_directory__/fill_ctd.py' '@EXECUTABLE@.ctd' '$args_json' '$hard
       <param name="sect_flag_false_adv" argument="-test_section:sect_flag_false_adv" type="boolean" truevalue="true" falsevalue="false" checked="false" label="bool" help=""/>
     </section>
     <expand macro="adv_opts_macro">
-      <param name="true_adv" argument="-true_adv" type="boolean" truevalue="true" falsevalue="false" checked="true" label="bool" help=""/>
-      <param name="false_adv" argument="-false_adv" type="boolean" truevalue="true" falsevalue="false" checked="false" label="bool" help=""/>
-      <param name="flag_true_adv" argument="-flag_true_adv" type="boolean" truevalue="true" falsevalue="false" checked="true" label="bool" help=""/>
-      <param name="flag_false_adv" argument="-flag_false_adv" type="boolean" truevalue="true" falsevalue="false" checked="false" label="bool" help=""/>
+      <param argument="-true_adv" type="boolean" truevalue="true" falsevalue="false" checked="true" label="bool" help=""/>
+      <param argument="-false_adv" type="boolean" truevalue="true" falsevalue="false" checked="false" label="bool" help=""/>
+      <param argument="-flag_true_adv" type="boolean" truevalue="true" falsevalue="false" checked="true" label="bool" help=""/>
+      <param argument="-flag_false_adv" type="boolean" truevalue="true" falsevalue="false" checked="false" label="bool" help=""/>
     </expand>
     <param name="OPTIONAL_OUTPUTS" type="select" optional="true" multiple="true" label="Optional outputs">
       <option value="ctd_out_FLAG">Output used ctd (ini) configuration file</option>
@@ -84,13 +84,12 @@ python3 '$__tool_directory__/fill_ctd.py' '@EXECUTABLE@.ctd' '$args_json' '$hard
         <param name="sect_flag_true_adv" value="true"/>
         <param name="sect_flag_false_adv" value="false"/>
       </section>
-      <conditional name="adv_opts_cond">
+      <section name="adv_opts">
         <param name="true_adv" value="true"/>
         <param name="false_adv" value="false"/>
         <param name="flag_true_adv" value="true"/>
         <param name="flag_false_adv" value="false"/>
-        <param name="adv_opts_selector" value="advanced"/>
-      </conditional>
+      </section>
     </test>
   </tests>
   <help><![CDATA[Bool parameter tests.

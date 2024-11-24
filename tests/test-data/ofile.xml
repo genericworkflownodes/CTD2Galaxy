@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!--This is a configuration file for the integration of a tools into Galaxy (https://galaxyproject.org/). This file was automatically generated using CTDConverter.-->
 <!--Proposed Tool Section: [Test]-->
-<tool id="ofile" name="ofile" version="@TOOL_VERSION@+galaxy@GALAXY_VERSION@">
+<tool id="ofile" name="ofile" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@">
   <description>Outut File parameter tests</description>
   <macros>
     <token name="@EXECUTABLE@">ofile</token>
@@ -100,10 +100,10 @@ python3 '$__tool_directory__/fill_ctd.py' '@EXECUTABLE@.ctd' '$args_json' '$hard
   'optional_oneformat_adv/output.${gxy2omsext("tsv")}'
 #end if
 -mandatory_multformat_adv
-'mandatory_multformat_adv/output.${adv_opts_cond.mandatory_multformat_adv_type}'
+'mandatory_multformat_adv/output.${adv_opts.mandatory_multformat_adv_type}'
 #if "optional_multformat_adv_FLAG" in str($OPTIONAL_OUTPUTS).split(',')
   -optional_multformat_adv
-  'optional_multformat_adv/output.${adv_opts_cond.optional_multformat_adv_type}'
+  'optional_multformat_adv/output.${adv_opts.optional_multformat_adv_type}'
 #end if
 -test_section:sect_mandatory_noformat
 'test_section_sect_mandatory_noformat/output.${gxy2omsext("txt")}'
@@ -166,9 +166,9 @@ python3 '$__tool_directory__/fill_ctd.py' '@EXECUTABLE@.ctd' '$args_json' '$hard
 #if "optional_oneformat_adv_FLAG" in str($OPTIONAL_OUTPUTS).split(',')
   && mv 'optional_oneformat_adv/output.${gxy2omsext("tsv")}' '$optional_oneformat_adv'
 #end if
-&& mv 'mandatory_multformat_adv/output.${adv_opts_cond.mandatory_multformat_adv_type}' '$mandatory_multformat_adv'
+&& mv 'mandatory_multformat_adv/output.${adv_opts.mandatory_multformat_adv_type}' '$mandatory_multformat_adv'
 #if "optional_multformat_adv_FLAG" in str($OPTIONAL_OUTPUTS).split(',')
-  && mv 'optional_multformat_adv/output.${adv_opts_cond.optional_multformat_adv_type}' '$optional_multformat_adv'
+  && mv 'optional_multformat_adv/output.${adv_opts.optional_multformat_adv_type}' '$optional_multformat_adv'
 #end if
 && mv 'test_section_sect_mandatory_noformat/output.${gxy2omsext("txt")}' '$test_section_sect_mandatory_noformat'
 #if "sect_optional_noformat_FLAG" in str($OPTIONAL_OUTPUTS).split(',')
@@ -294,14 +294,14 @@ python3 '$__tool_directory__/fill_ctd.py' '@EXECUTABLE@.ctd' '$args_json' '$hard
     </data>
     <data name="mandatory_multformat_adv" label="${tool.name} on ${on_string}: mandatory_multformat_adv" format="tsv">
       <change_format>
-        <when input="adv_opts_cond.mandatory_multformat_adv_type" value="eyt" format="tabular"/>
-        <when input="adv_opts_cond.mandatory_multformat_adv_type" value="ezt" format="tabular"/>
+        <when input="adv_opts.mandatory_multformat_adv_type" value="eyt" format="tabular"/>
+        <when input="adv_opts.mandatory_multformat_adv_type" value="ezt" format="tabular"/>
       </change_format>
     </data>
     <data name="optional_multformat_adv" label="${tool.name} on ${on_string}: optional_multformat_adv" format="tsv">
       <change_format>
-        <when input="adv_opts_cond.optional_multformat_adv_type" value="eyt" format="tabular"/>
-        <when input="adv_opts_cond.optional_multformat_adv_type" value="ezt" format="tabular"/>
+        <when input="adv_opts.optional_multformat_adv_type" value="eyt" format="tabular"/>
+        <when input="adv_opts.optional_multformat_adv_type" value="ezt" format="tabular"/>
       </change_format>
       <filter>OPTIONAL_OUTPUTS is not None and "optional_multformat_adv_FLAG" in OPTIONAL_OUTPUTS</filter>
     </data>
@@ -361,11 +361,10 @@ python3 '$__tool_directory__/fill_ctd.py' '@EXECUTABLE@.ctd' '$args_json' '$hard
         <param name="sect_mandatory_multformat_adv_type" value="ext"/>
         <param name="sect_optional_multformat_adv_type" value="ext"/>
       </section>
-      <conditional name="adv_opts_cond">
+      <section name="adv_opts">
         <param name="mandatory_multformat_adv_type" value="ext"/>
         <param name="optional_multformat_adv_type" value="ext"/>
-        <param name="adv_opts_selector" value="advanced"/>
-      </conditional>
+      </section>
       <output name="mandatory_noformat" ftype="txt" value="outfile.txt"/>
       <output name="mandatory_oneformat" ftype="tsv" value="outfile.txt"/>
       <output name="mandatory_multformat" ftype="tsv" value="outfile.txt"/>

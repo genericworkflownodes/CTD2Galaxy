@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!--This is a configuration file for the integration of a tools into Galaxy (https://galaxyproject.org/). This file was automatically generated using CTDConverter.-->
 <!--Proposed Tool Section: [Test]-->
-<tool id="string" name="string" version="@TOOL_VERSION@+galaxy@GALAXY_VERSION@">
+<tool id="string" name="string" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@">
   <description>String parameter tests</description>
   <macros>
     <token name="@EXECUTABLE@">string</token>
@@ -32,16 +32,16 @@ python3 '$__tool_directory__/fill_ctd.py' '@EXECUTABLE@.ctd' '$args_json' '$hard
     <configfile name="hardcoded_json"><![CDATA[{}]]></configfile>
   </configfiles>
   <inputs>
-    <param name="wodefault_mandatory_unrestricted" argument="-wodefault_mandatory_unrestricted" type="text" optional="false" value="" label="string" help="">
+    <param argument="-wodefault_mandatory_unrestricted" type="text" optional="false" value="" label="string" help="">
       <expand macro="list_string_san" name="wodefault_mandatory_unrestricted"/>
     </param>
-    <param name="default_mandatory_unrestricted" argument="-default_mandatory_unrestricted" type="text" optional="false" value="default" label="string" help="">
+    <param argument="-default_mandatory_unrestricted" type="text" optional="false" value="default" label="string" help="">
       <expand macro="list_string_san" name="default_mandatory_unrestricted"/>
     </param>
-    <param name="wodefault_optional_unrestricted" argument="-wodefault_optional_unrestricted" type="text" optional="true" value="" label="string" help="">
+    <param argument="-wodefault_optional_unrestricted" type="text" optional="true" value="" label="string" help="">
       <expand macro="list_string_san" name="wodefault_optional_unrestricted"/>
     </param>
-    <param name="default_optional_unrestricted" argument="-default_optional_unrestricted" type="text" optional="false" value="default" label="string" help="">
+    <param argument="-default_optional_unrestricted" type="text" optional="false" value="default" label="string" help="">
       <expand macro="list_string_san" name="default_optional_unrestricted"/>
     </param>
     <section name="test_section" title="Test Section" help="" expanded="false">
@@ -71,16 +71,16 @@ python3 '$__tool_directory__/fill_ctd.py' '@EXECUTABLE@.ctd' '$args_json' '$hard
       </param>
     </section>
     <expand macro="adv_opts_macro">
-      <param name="wodefault_mandatory_unrestricted_adv" argument="-wodefault_mandatory_unrestricted_adv" type="text" optional="false" value="" label="string" help="">
+      <param argument="-wodefault_mandatory_unrestricted_adv" type="text" optional="false" value="" label="string" help="">
         <expand macro="list_string_san" name="wodefault_mandatory_unrestricted_adv"/>
       </param>
-      <param name="default_mandatory_unrestricted_adv" argument="-default_mandatory_unrestricted_adv" type="text" optional="false" value="default" label="string" help="">
+      <param argument="-default_mandatory_unrestricted_adv" type="text" optional="false" value="default" label="string" help="">
         <expand macro="list_string_san" name="default_mandatory_unrestricted_adv"/>
       </param>
-      <param name="wodefault_optional_unrestricted_adv" argument="-wodefault_optional_unrestricted_adv" type="text" optional="true" value="" label="string" help="">
+      <param argument="-wodefault_optional_unrestricted_adv" type="text" optional="true" value="" label="string" help="">
         <expand macro="list_string_san" name="wodefault_optional_unrestricted_adv"/>
       </param>
-      <param name="default_optional_unrestricted_adv" argument="-default_optional_unrestricted_adv" type="text" optional="false" value="default" label="string" help="">
+      <param argument="-default_optional_unrestricted_adv" type="text" optional="false" value="default" label="string" help="">
         <expand macro="list_string_san" name="default_optional_unrestricted_adv"/>
       </param>
     </expand>
@@ -109,12 +109,11 @@ python3 '$__tool_directory__/fill_ctd.py' '@EXECUTABLE@.ctd' '$args_json' '$hard
         <param name="sect_default_mandatory_unrestricted_adv" value="default"/>
         <param name="sect_default_optional_unrestricted_adv" value="default"/>
       </section>
-      <conditional name="adv_opts_cond">
+      <section name="adv_opts">
         <param name="wodefault_mandatory_unrestricted_adv" value="1 2"/>
         <param name="default_mandatory_unrestricted_adv" value="default"/>
         <param name="default_optional_unrestricted_adv" value="default"/>
-        <param name="adv_opts_selector" value="advanced"/>
-      </conditional>
+      </section>
     </test>
   </tests>
   <help><![CDATA[String parameter tests.

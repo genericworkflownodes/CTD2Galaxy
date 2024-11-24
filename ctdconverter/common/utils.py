@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 import json
+import logging
 import ntpath
 import operator
 import os
+import re
 from functools import reduce
 
 from CTDopts.CTDopts import (
@@ -16,7 +18,6 @@ from CTDopts.CTDopts import (
 )
 from lxml import etree
 
-from ..common import logger
 from ..common.exceptions import ApplicationException
 
 
@@ -109,7 +110,7 @@ def validate_path_exists(path):
 
 def validate_argument_is_directory(args, argument_name):
     file_name = getattr(args, argument_name)
-    logger.info("REALPATH %s" % os.path.realpath(file_name))
+    logging.info("REALPATH %s" % os.path.realpath(file_name))
     if file_name is not None and os.path.isdir(os.path.realpath(file_name)):
         raise ApplicationException("The provided output file name (%s) points to a directory." % file_name)
 
@@ -150,12 +151,12 @@ def parse_input_ctds(xsd_location, input_ctds, output_destination, output_file_e
     schema = None
     if xsd_location is not None:
         try:
-            logger.info("Loading validation schema from %s" % xsd_location, 0)
+            logging.info("Loading validation schema from %s" % xsd_location)
             schema = etree.XMLSchema(etree.parse(xsd_location))
         except Exception as e:
-            logger.error("Could not load validation schema {}. Reason: {}".format(xsd_location, str(e)), 0)
+            logging.error("Could not load validation schema {}. Reason: {}".format(xsd_location, str(e)))
     else:
-        logger.warning("Validation against a schema has not been enabled.", 0)
+        logging.warning("Validation against a schema has not been enabled.")
 
     for input_ctd in input_ctds:
         if schema is not None:
@@ -165,7 +166,7 @@ def parse_input_ctds(xsd_location, input_ctds, output_destination, output_file_e
         # if multiple inputs are being converted, we need to generate a different output_file for each input
         if is_converting_multiple_ctds:
             output_file = os.path.join(output_file, get_filename_without_suffix(input_ctd) + "." + output_file_extension)
-        logger.info("Parsing %s" % input_ctd)
+        logging.info("Parsing %s" % input_ctd)
 
         model = None
         try:
@@ -184,7 +185,14 @@ def parse_input_ctds(xsd_location, input_ctds, output_destination, output_file_e
 
 
 def flatten_list_of_lists(args, list_name):
-    setattr(args, list_name, [item for sub_list in getattr(args, list_name) for item in sub_list])
+    lst = getattr(args, list_name)
+    ret = []
+    for e in lst:
+        if isinstance(e, list):
+            ret.extend(e)
+        else:
+            ret.append(e)
+    setattr(args, list_name, ret)
 
 
 def validate_against_schema(ctd_file, schema):
@@ -197,7 +205,7 @@ def validate_against_schema(ctd_file, schema):
 
 def add_common_parameters(parser, version, last_updated):
     parser.add_argument("FORMAT", default=None, help="Output format (mandatory). Can be one of: cwl, galaxy.")
-    parser.add_argument("-i", "--input", dest="input_files", default=[], required=True, nargs="+", action="append",
+    parser.add_argument("-i", "--input", dest="input_files", required=True, nargs="+", action="append",
                         help="List of CTD files to convert.")
     parser.add_argument("-o", "--output-destination", dest="output_destination", required=True,
                         help="If multiple input files are given, then a folder in which all converted "
@@ -367,72 +375,23 @@ def extract_and_flatten_parameters(ctd_model, nodes=False):
 #     return reversed(parameters)
 
 
-# some parameters are mapped to command line options, this method helps resolve those mappings, if any
-def resolve_param_mapping(param, ctd_model, fix_underscore=False):
-    # go through all mappings and find if the given param appears as a reference name in a mapping element
-    param_mapping = None
-    ctd_model_cli = []
-    if hasattr(ctd_model, "cli"):
-        ctd_model_cli = ctd_model.cli
-
-    for cli_element in ctd_model_cli:
-        for mapping_element in cli_element.mappings:
-            if mapping_element.reference_name == param.name:
-                if param_mapping is not None:
-                    logger.warning("The parameter %s has more than one mapping in the <cli> section. "
-                                   "The first found mapping, %s, will be used." % (param.name, param_mapping), 1)
-                else:
-                    param_mapping = cli_element.option_identifier
-    if param_mapping is not None:
-        ret = param_mapping
-    else:
-        ret = param.name
-    if fix_underscore and ret.startswith("_"):
-        return ret[1:]
-    else:
-        return ret
-
-
-def _extract_param_cli_name(param, ctd_model, fix_underscore=False):
-    # we generate parameters with colons for subgroups, but not for the two topmost parents (OpenMS legacy)
-    if type(param.parent) == ParameterGroup:
-        if hasattr(ctd_model, "cli") and ctd_model.cli:
-            logger.warning("Using nested parameter sections (NODE elements) is not compatible with <cli>", 1)
-        return ":".join(extract_param_path(param, fix_underscore)[:-1]) + ":" + resolve_param_mapping(param, ctd_model, fix_underscore)
-    else:
-        return resolve_param_mapping(param, ctd_model, fix_underscore)
-
-
-def extract_param_path(param, fix_underscore=False):
+def extract_param_path(param, fix_dedup_prefix=False):
     pl = param.get_lineage(name_only=True)
-    if fix_underscore:
+    if fix_dedup_prefix:
         for i, p in enumerate(pl):
-            if p.startswith("_"):
-                pl[i] = pl[i][1:]
+            dedup_match = re.match("DEDUP_[0-9]+_DEDUP_(.*)", p)
+            if dedup_match:
+                pl[i] = dedup_match.group(1)
     return pl
-#     if type(param.parent) == ParameterGroup or type(param.parent) == Parameters:
-#         if not hasattr(param.parent.parent, "parent"):
-#             return [param.name]
-#         elif not hasattr(param.parent.parent.parent, "parent"):
-#             return [param.name]
-#         else:
-#             return extract_param_path(param.parent) + [param.name]
-#     else:
-#         return [param.name]
 
 
-def extract_param_name(param, fix_underscore=False):
+def extract_param_name(param, fix_dedup_prefix=False):
     # we generate parameters with colons for subgroups, but not for the two topmost parents (OpenMS legacy)
-    return ":".join(extract_param_path(param, fix_underscore))
+    return ":".join(extract_param_path(param, fix_dedup_prefix))
 
 
 def extract_command_line_prefix(param, ctd_model):
-    param_name = extract_param_name(param, True)
-    param_cli_name = _extract_param_cli_name(param, ctd_model, True)
-    if param_name == param_cli_name:
-        # there was no mapping, so for the cli name we will use a '-' in the prefix
-        param_cli_name = "-" + param_name
-    return param_cli_name
+    return "-" + extract_param_name(param, True)
 
 
 def indent(s, indentation="  "):

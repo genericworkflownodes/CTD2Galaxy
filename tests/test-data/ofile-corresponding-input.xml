@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!--This is a configuration file for the integration of a tools into Galaxy (https://galaxyproject.org/). This file was automatically generated using CTDConverter.-->
 <!--Proposed Tool Section: [Test]-->
-<tool id="ofile-corresponding-input" name="ofile-corresponding-input" version="@TOOL_VERSION@+galaxy@GALAXY_VERSION@">
+<tool id="ofile-corresponding-input" name="ofile-corresponding-input" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@">
   <description>Outut File parameter tests-corresponding-input</description>
   <macros>
     <token name="@EXECUTABLE@">ofile-corresponding-input</token>
@@ -214,9 +214,9 @@ python3 '$__tool_directory__/fill_ctd.py' '@EXECUTABLE@.ctd' '$args_json' '$hard
     <configfile name="hardcoded_json"><![CDATA[{}]]></configfile>
   </configfiles>
   <inputs>
-    <param name="input_noformat" argument="-input_noformat" type="data" format="txt" optional="false" label="input file" help=" select txt data sets(s)"/>
-    <param name="input_oneformat" argument="-input_oneformat" type="data" format="tsv" optional="false" label="input file" help=" select tsv data sets(s)"/>
-    <param name="input_multformat" argument="-input_multformat" type="data" format="tabular,tsv" optional="false" label="input file" help=" select tabular,tsv data sets(s)"/>
+    <param argument="-input_noformat" type="data" format="txt" optional="false" label="input file" help=" select txt data sets(s)"/>
+    <param argument="-input_oneformat" type="data" format="tsv" optional="false" label="input file" help=" select tsv data sets(s)"/>
+    <param argument="-input_multformat" type="data" format="tabular,tsv" optional="false" label="input file" help=" select tabular,tsv data sets(s)"/>
     <expand macro="adv_opts_macro"/>
     <param name="OPTIONAL_OUTPUTS" type="select" optional="true" multiple="true" label="Optional outputs">
       <option value="optional_noformat_FLAG">optional_noformat (output file)</option>
@@ -292,9 +292,7 @@ python3 '$__tool_directory__/fill_ctd.py' '@EXECUTABLE@.ctd' '$args_json' '$hard
       <param name="input_noformat" ftype="txt" value="0test.ext"/>
       <param name="input_oneformat" ftype="tsv" value="1test.ext"/>
       <param name="input_multformat" ftype="tabular" value="2test.ext"/>
-      <conditional name="adv_opts_cond">
-        <param name="adv_opts_selector" value="advanced"/>
-      </conditional>
+      <section name="adv_opts"/>
       <output name="mandatory_noformat" ftype="txt" value="outfile.txt"/>
       <output name="mandatory_oneformat" ftype="tsv" value="outfile.txt"/>
       <output name="mandatory_multformat" value="outfile.txt"/>

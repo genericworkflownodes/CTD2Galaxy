@@ -7,7 +7,7 @@
 # which kind of sucks, because this seems to be the way to state that a parameter is truly optional and has no default
 # since cwlgen is just "fancy classes" around the yaml.dump() method, we implemented our own generation of yaml
 
-
+import logging
 import ruamel.yaml as yaml
 from CTDopts.CTDopts import (
     _Choices,
@@ -17,10 +17,7 @@ from CTDopts.CTDopts import (
 )
 
 from .. import __version__ as version
-from ..common import (
-    logger,
-    utils
-)
+from ..common import utils
 
 # all cwl-related properties are defined here
 
@@ -75,10 +72,10 @@ def convert_models(args, parsed_ctds):
         origin_file = parsed_ctd.input_file
         output_file = parsed_ctd.suggested_output_file
 
-        logger.info("Converting {} (source {})".format(model.name, utils.get_filename(origin_file)))
+        logging.info("Converting {} (source {})".format(model.name, utils.get_filename(origin_file)))
         cwl_tool = convert_to_cwl(model, args)
 
-        logger.info("Writing to %s" % utils.get_filename(output_file), 1)
+        logging.info("Writing to %s" % utils.get_filename(output_file))
 
         stream = open(output_file, 'w')
         stream.write(CWL_SHEBANG + '\n\n')
