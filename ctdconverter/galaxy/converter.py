@@ -643,7 +643,7 @@ python3 '$__tool_directory__/fill_ctd.py' '@EXECUTABLE@.ctd' '$args_json' '$hard
             # in the else branch the parameter is neither blacklisted nor hardcoded...
 
             _actual_parameter = get_galaxy_parameter_path(param)
-            actual_parameter = get_galaxy_parameter_path(param, fix_underscore=True)
+            actual_parameter = get_galaxy_parameter_path(param, fix_dedup_prefix=True)
             # all but bool params need the command line argument (bools have it already in the true/false value)
             if param.type is _OutFile or param.type is _OutPrefix or param.type is _InFile:
                 param_cmd['command'].append(command_line_prefix)
@@ -677,7 +677,7 @@ python3 '$__tool_directory__/fill_ctd.py' '@EXECUTABLE@.ctd' '$args_json' '$hard
                 param_cmd['command'].append(actual_parameter + "/")
             elif param.type is _OutFile:
                 _actual_parameter = get_galaxy_parameter_path(param, separator="_")
-                actual_parameter = get_galaxy_parameter_path(param, separator="_", fix_underscore=True)
+                actual_parameter = get_galaxy_parameter_path(param, separator="_", fix_dedup_prefix=True)
                 # check if there is a parameter that sets the format
                 # if so we add an extension to the generated files which will be used to
                 # determine the format in the output tag
@@ -774,7 +774,7 @@ python3 '$__tool_directory__/fill_ctd.py' '@EXECUTABLE@.ctd' '$args_json' '$hard
             #   need no if (otherwise the empty string could not be provided)
             if not (param.required or is_boolean_parameter(param) or (param.type is str and param.restrictions is None)):
                 # and not(param.type is _InFile and param.is_list):
-                actual_parameter = get_galaxy_parameter_path(param, suffix="FLAG", fix_underscore=True)
+                actual_parameter = get_galaxy_parameter_path(param, suffix="FLAG", fix_dedup_prefix=True)
                 _actual_parameter = get_galaxy_parameter_path(param, suffix="FLAG")
                 for stage in param_cmd:
                     if len(param_cmd[stage]) == 0:
@@ -871,14 +871,14 @@ def expand_macros(node, macros_to_expand):
         expand_node.attrib["macro"] = expand_macro
 
 
-def get_galaxy_parameter_path(param, separator=".", suffix=None, fix_underscore=False):
+def get_galaxy_parameter_path(param, separator=".", suffix=None, fix_dedup_prefix=False):
     """
     Get the complete path for a parameter as a string where the path
     components are joined by the given separator. A given suffix can
     be appended
     """
-    p = get_galaxy_parameter_name(param, suffix, fix_underscore)
-    path = utils.extract_param_path(param, fix_underscore)
+    p = get_galaxy_parameter_name(param, suffix, fix_dedup_prefix)
+    path = utils.extract_param_path(param, fix_dedup_prefix)
     if len(path) > 1:
         path = path[:-1] + [p]
     elif param.advanced and (param.type is not _OutFile and param.type is not _OutPrefix or suffix):
@@ -892,7 +892,7 @@ def get_galaxy_parameter_path(param, separator=".", suffix=None, fix_underscore=
     return separator.join(path).replace("-", "_")
 
 
-def get_galaxy_parameter_name(param, suffix=None, fix_underscore=False):
+def get_galaxy_parameter_name(param, suffix=None, fix_dedup_prefix=False):
     """
     get the name of the parameter used in the galaxy tool
     - replace : and - by _
@@ -906,8 +906,9 @@ def get_galaxy_parameter_name(param, suffix=None, fix_underscore=False):
     @return the name used for the parameter in the tool form
     """
     p = param.name.replace("-", "_")
-    if fix_underscore and p.startswith("_"):
-        p = p[1:]
+    dedup_match = re.match("DEDUP_[0-9]+_DEDUP_(.*)", p)
+    if fix_dedup_prefix and dedup_match:
+        p = dedup_match.group(1)
     if param.type is _OutFile and suffix is not None:
         return f"{p}_{suffix}"
     else:

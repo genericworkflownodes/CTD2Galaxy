@@ -4,6 +4,7 @@ import logging
 import ntpath
 import operator
 import os
+import re
 from functools import reduce
 
 from CTDopts.CTDopts import (
@@ -374,72 +375,23 @@ def extract_and_flatten_parameters(ctd_model, nodes=False):
 #     return reversed(parameters)
 
 
-# some parameters are mapped to command line options, this method helps resolve those mappings, if any
-def resolve_param_mapping(param, ctd_model, fix_underscore=False):
-    # go through all mappings and find if the given param appears as a reference name in a mapping element
-    param_mapping = None
-    ctd_model_cli = []
-    if hasattr(ctd_model, "cli"):
-        ctd_model_cli = ctd_model.cli
-
-    for cli_element in ctd_model_cli:
-        for mapping_element in cli_element.mappings:
-            if mapping_element.reference_name == param.name:
-                if param_mapping is not None:
-                    logging.warning("The parameter %s has more than one mapping in the <cli> section. "
-                                    "The first found mapping, %s, will be used." % (param.name, param_mapping))
-                else:
-                    param_mapping = cli_element.option_identifier
-    if param_mapping is not None:
-        ret = param_mapping
-    else:
-        ret = param.name
-    if fix_underscore and ret.startswith("_"):
-        return ret[1:]
-    else:
-        return ret
-
-
-def _extract_param_cli_name(param, ctd_model, fix_underscore=False):
-    # we generate parameters with colons for subgroups, but not for the two topmost parents (OpenMS legacy)
-    if type(param.parent) == ParameterGroup:
-        if hasattr(ctd_model, "cli") and ctd_model.cli:
-            logging.warning("Using nested parameter sections (NODE elements) is not compatible with <cli>")
-        return ":".join(extract_param_path(param, fix_underscore)[:-1]) + ":" + resolve_param_mapping(param, ctd_model, fix_underscore)
-    else:
-        return resolve_param_mapping(param, ctd_model, fix_underscore)
-
-
-def extract_param_path(param, fix_underscore=False):
+def extract_param_path(param, fix_dedup_prefix=False):
     pl = param.get_lineage(name_only=True)
-    if fix_underscore:
+    if fix_dedup_prefix:
         for i, p in enumerate(pl):
-            if p.startswith("_"):
-                pl[i] = pl[i][1:]
+            dedup_match = re.match("DEDUP_[0-9]+_DEDUP_(.*)", p)
+            if dedup_match:
+                pl[i] = dedup_match.group(1)
     return pl
-#     if type(param.parent) == ParameterGroup or type(param.parent) == Parameters:
-#         if not hasattr(param.parent.parent, "parent"):
-#             return [param.name]
-#         elif not hasattr(param.parent.parent.parent, "parent"):
-#             return [param.name]
-#         else:
-#             return extract_param_path(param.parent) + [param.name]
-#     else:
-#         return [param.name]
 
 
-def extract_param_name(param, fix_underscore=False):
+def extract_param_name(param, fix_dedup_prefix=False):
     # we generate parameters with colons for subgroups, but not for the two topmost parents (OpenMS legacy)
-    return ":".join(extract_param_path(param, fix_underscore))
+    return ":".join(extract_param_path(param, fix_dedup_prefix))
 
 
 def extract_command_line_prefix(param, ctd_model):
-    param_name = extract_param_name(param, True)
-    param_cli_name = _extract_param_cli_name(param, ctd_model, True)
-    if param_name == param_cli_name:
-        # there was no mapping, so for the cli name we will use a '-' in the prefix
-        param_cli_name = "-" + param_name
-    return param_cli_name
+    return "-" + extract_param_name(param, True)
 
 
 def indent(s, indentation="  "):
